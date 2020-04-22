@@ -3,6 +3,7 @@ import os
 import sys
 from time import sleep
 
+import schedule
 from dotenv import load_dotenv
 
 from builders.movie_path_builder import MoviePathBuilder
@@ -64,6 +65,12 @@ def main():
             )
             client.changeLocation(torrent.id, newPath)
 
+    logging.info('Moving files done.')
+
 
 if __name__ == '__main__':
-    main()
+    schedule.every(1).minutes.do(main)
+
+    while True:
+        schedule.run_pending()
+        sleep(1)

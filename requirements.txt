@@ -1,3 +1,4 @@
 python-dotenv==0.13.0
 guessit==3.1.0
 qbittorrent-api
+schedule

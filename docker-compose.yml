@@ -54,3 +54,4 @@ services:
       PYTHONUNBUFFERED: 'true'
     volumes:
       - ./:/app
+    restart: on-failure
