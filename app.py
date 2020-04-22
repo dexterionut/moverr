@@ -35,14 +35,14 @@ def main():
 
     logging.info('Started moving files...')
 
-    torrentClient = QBitTorrentClient(
+    client = QBitTorrentClient(
         host=TORRENT_CLIENT_HOST,
         username=TORRENT_CLIENT_USERNAME,
         password=TORRENT_CLIENT_PASSWORD
     )
 
-    torrents = torrentClient.getCompletedTorrentsByCategory(TV_SHOWS_CATEGORY) + \
-               torrentClient.getCompletedTorrentsByCategory(MOVIES_CATEGORY)
+    torrents = client.getTorrentsByCategory(TV_SHOWS_CATEGORY) + \
+               client.getTorrentsByCategory(MOVIES_CATEGORY)
 
     if len(torrents) == 0:
         logging.info('Nothing to move.')
@@ -61,7 +61,7 @@ def main():
             logging.info(
                 'Changing location of torrent {} from {} to {}'.format(torrent.id, torrent.currentPath, newPath)
             )
-            torrentClient.changeLocation(torrent.id, newPath)
+            client.changeLocation(torrent.id, newPath)
 
 
 if __name__ == '__main__':

@@ -14,7 +14,7 @@ class QBitTorrentClient(TorrentClient):
 
         self._client = qbittorrentapi.Client(host=host, username=username, password=password)
 
-    def getCompletedTorrentsByCategory(self, category: str) -> List[Torrent]:
+    def getTorrentsByCategory(self, category: str) -> List[Torrent]:
         torrents = []
         for torrent in self._client.torrents_info(category=category, sort='added_on', reverse=True):
             # skip already moving files
@@ -34,7 +34,3 @@ class QBitTorrentClient(TorrentClient):
         self._client.torrents.pause(torrentId)
         self._client.torrents_set_location(newLocation, torrentId)
         self._client.torrents.resume(torrentId)
-
-    def isMoving(self) -> bool:
-        movingTorrents = [torrent for torrent in self._client.torrents_info() if torrent['state'] == 'moving']
-        return len(movingTorrents) > 0
