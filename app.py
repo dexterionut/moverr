@@ -55,6 +55,7 @@ def main():
         elif torrent.category == MOVIES_CATEGORY:
             newPath = MoviePathBuilder.build(torrent, MOVIES_BASE_FOLDER)
         else:
+            logging.info('Unknown category of torrent {} with name {}. Continuing...'.format(torrent.id, torrent.name))
             continue
 
         if torrent.currentPath != newPath:
