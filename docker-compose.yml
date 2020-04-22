@@ -1,0 +1,56 @@
+version: '3.6'
+services:
+  jackett:
+    image: linuxserver/jackett
+    environment:
+      - PUID=99
+      - PGID=100
+      - TZ=Europe/Bucharest
+    volumes:
+      - './.docker/jackett:/config'
+    ports:
+      - 9117:9117
+    restart: on-failure:5
+
+  sonarr:
+    image: linuxserver/sonarr
+    container_name: sonarr
+    volumes:
+      - ./.docker/sonarr:/config
+      - ./.docker/downloads:/downloads
+      - ./.docker/seriale:/tv
+    #      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 8989:8989
+    environment:
+      - PUID=99
+      - PGID=100
+      - TZ=Europe/Bucharest
+    restart: unless-stopped
+
+  qbittorrent:
+    image: linuxserver/qbittorrent
+    container_name: qbittorrent
+    volumes:
+      - ./.docker/qbittorrent:/config
+      - ./.docker/downloads:/downloads
+      - ./.docker/seriale:/tv-shows
+      - ./.docker/filme:/movies
+    ports:
+      - 6881:6881
+      - 6881:6881/udp
+      - 8080:8080
+    environment:
+      - PUID=99
+      - PGID=100
+      - UMASK_SET=022
+      - TZ=Europe/Bucharest
+      - WEBUI_PORT=8080
+    restart: unless-stopped
+
+  moverr:
+    build: ./
+    environment:
+      PYTHONUNBUFFERED: 'true'
+    volumes:
+      - ./:/app
