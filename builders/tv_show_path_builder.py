@@ -25,4 +25,4 @@ class TvShowPathBuilder(AbstractPathBuilder):
             torrentSubfolder = '.'.join(torrent.name.split('.')[0:-1])
             path = '/'.join([path, torrentSubfolder])
 
-        return path + '/'
+        return path.replace(' ', '.') + '/'

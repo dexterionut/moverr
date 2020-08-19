@@ -7,8 +7,11 @@ import schedule
 from dotenv import load_dotenv
 
 from builders.movie_path_builder import MoviePathBuilder
+from builders.path_builder_factory import PathBuilderFactory
 from builders.tv_show_path_builder import TvShowPathBuilder
 from clients.qbittorrent_client import QBitTorrentClient
+from clients.torrent_client_factory import TorrentClientFactory
+from constants import Constants
 
 load_dotenv()
 
@@ -23,49 +26,35 @@ def configLogging():
 
 def main():
     configLogging()
-
-    TORRENT_CLIENT_HOST = os.getenv('TORRENT_CLIENT_HOST')
-    TORRENT_CLIENT_USERNAME = os.getenv('TORRENT_CLIENT_USERNAME')
-    TORRENT_CLIENT_PASSWORD = os.getenv('TORRENT_CLIENT_PASSWORD')
-
-    TV_SHOWS_BASE_FOLDER = os.getenv('TV_SHOWS_BASE_FOLDER')
-    TV_SHOWS_CATEGORY = os.getenv('TV_SHOWS_CATEGORY')
-
-    MOVIES_BASE_FOLDER = os.getenv('MOVIES_BASE_FOLDER')
-    MOVIES_CATEGORY = os.getenv('MOVIES_CATEGORY')
+    constants = Constants()
 
     logging.info('Started moving files...')
 
-    client = QBitTorrentClient(
-        host=TORRENT_CLIENT_HOST,
-        username=TORRENT_CLIENT_USERNAME,
-        password=TORRENT_CLIENT_PASSWORD
-    )
-
-    torrents = client.getTorrentsByCategory(TV_SHOWS_CATEGORY) + \
-               client.getTorrentsByCategory(MOVIES_CATEGORY)
-
-    if len(torrents) == 0:
-        logging.info('Nothing to move.')
+    client = TorrentClientFactory.create(constants, constants.TORRENT_CLIENT_NAME)
+    if not client:
         return
 
+    torrents = client.getCompletedTorrentsByCategory(constants.TV_SHOWS_CATEGORY) + \
+               client.getCompletedTorrentsByCategory(constants.MOVIES_CATEGORY)
+
     # move torrents
+    hasMoved = False
     for torrent in torrents:
-        if torrent.category == TV_SHOWS_CATEGORY:
-            newPath = TvShowPathBuilder.build(torrent, TV_SHOWS_BASE_FOLDER)
-        elif torrent.category == MOVIES_CATEGORY:
-            newPath = MoviePathBuilder.build(torrent, MOVIES_BASE_FOLDER)
-        else:
-            logging.info('Unknown category of torrent {} with name {}. Continuing...'.format(torrent.id, torrent.name))
+        newPath = PathBuilderFactory.create(constants, torrent)
+        if not newPath:
             continue
 
         if torrent.currentPath != newPath:
+            hasMoved = True
             logging.info(
-                'Changing location of torrent {} from {} to {}'.format(torrent.id, torrent.currentPath, newPath)
+                'Changing location of torrent {} from {} to {}'.format(torrent.name, torrent.currentPath, newPath)
             )
             client.changeLocation(torrent.id, newPath)
 
-    logging.info('Moving files done.')
+    if hasMoved:
+        logging.info('Moving files done.')
+    else:
+        logging.info('Nothing to move.')
 
 
 if __name__ == '__main__':
