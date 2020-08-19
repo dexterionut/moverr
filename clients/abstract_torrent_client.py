@@ -4,7 +4,7 @@ from models.torrent import Torrent
 
 
 class TorrentClient:
-    def getCompletedTorrentsByCategory(self, category: str) -> List[Torrent]:
+    def getTorrentsByCategory(self, category: str) -> List[Torrent]:
         raise NotImplementedError()
 
     def changeLocation(self, torrentId: str, newLocation: str):

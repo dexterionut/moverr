@@ -14,11 +14,11 @@ class QBitTorrentClient(TorrentClient):
 
         self._client = qbittorrentapi.Client(host=host, username=username, password=password)
 
-    def getCompletedTorrentsByCategory(self, category: str) -> List[Torrent]:
+    def getTorrentsByCategory(self, category: str) -> List[Torrent]:
         torrents = []
         for torrent in self._client.torrents_info(category=category, sort='added_on', reverse=True):
-            # only get complete torrents
-            if not torrent.state_enum.is_complete:
+            # skip already moving files
+            if torrent['state'] == 'moving':
                 continue
 
             files = []

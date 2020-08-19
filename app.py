@@ -34,8 +34,8 @@ def main():
     if not client:
         return
 
-    torrents = client.getCompletedTorrentsByCategory(constants.TV_SHOWS_CATEGORY) + \
-               client.getCompletedTorrentsByCategory(constants.MOVIES_CATEGORY)
+    torrents = client.getTorrentsByCategory(constants.TV_SHOWS_CATEGORY) + \
+               client.getTorrentsByCategory(constants.MOVIES_CATEGORY)
 
     # move torrents
     hasMoved = False
