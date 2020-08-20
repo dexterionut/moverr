@@ -13,16 +13,13 @@ class TvShowPathBuilder(AbstractPathBuilder):
         return True
 
     @staticmethod
-    def build(torrent: Torrent, basePath='/') -> str:
+    def buildNewPath(torrent: Torrent, basePath='/') -> dict:
         guessedDict = guessit(torrent.name)
-        path = '/'.join([basePath, guessedDict['title']])
+        torrentClientPath = '/'.join([basePath, guessedDict['title']])
 
         if not TvShowPathBuilder.isFullSeason(guessedDict):
             season = 'Season ' + str(guessedDict['season'])
-            path = '/'.join([path, season])
+            torrentClientPath = '/'.join([torrentClientPath, season])
 
-        if not TvShowPathBuilder.hasSubfolder(torrent.files):
-            torrentSubfolder = '.'.join(torrent.name.split('.')[0:-1])
-            path = '/'.join([path, torrentSubfolder])
-
-        return path.replace(' ', '.') + '/'
+        return TvShowPathBuilder._buildNewPathDict(torrent, torrentClientPath)
+#

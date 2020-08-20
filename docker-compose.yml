@@ -54,4 +54,7 @@ services:
       PYTHONUNBUFFERED: 'true'
     volumes:
       - ./:/app
+      - ./.docker/downloads:/downloads
+      - ./.docker/seriale:/tv-shows
+      - ./.docker/filme:/movies
     restart: on-failure

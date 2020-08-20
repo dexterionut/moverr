@@ -40,16 +40,14 @@ def main():
     # move torrents
     hasMoved = False
     for torrent in torrents:
-        newPath = PathBuilderFactory.create(constants, torrent)
+        oldPath = PathBuilderFactory.createOldPathString(torrent)
+        newPath = PathBuilderFactory.createNewPathDict(constants, torrent)
         if not newPath:
             continue
 
-        if torrent.currentPath != newPath:
+        if torrent.currentPath != newPath['torrentClientPath']:
             hasMoved = True
-            logging.info(
-                'Changing location of torrent {} from {} to {}'.format(torrent.name, torrent.currentPath, newPath)
-            )
-            client.changeLocation(torrent.id, newPath)
+            client.changeLocation(torrent, oldPath, newPath)
 
     if hasMoved:
         logging.info('Moving files done.')

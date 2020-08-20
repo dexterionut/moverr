@@ -11,11 +11,7 @@ class MoviePathBuilder(AbstractPathBuilder):
         return True
 
     @staticmethod
-    def build(torrent: Torrent, basePath='/') -> str:
-        path = basePath
+    def buildNewPath(torrent: Torrent, basePath='/') -> dict:
+        torrentClientPath = basePath
 
-        if not MoviePathBuilder.hasSubfolder(torrent.files):
-            torrentSubfolder = '.'.join(torrent.name.split('.')[0:-1])
-            path = '/'.join([path, torrentSubfolder])
-
-        return path.replace(' ', '.') + '/'
+        return MoviePathBuilder._buildNewPathDict(torrent, torrentClientPath)
